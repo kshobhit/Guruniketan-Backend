@@ -1,0 +1,158 @@
+========= orange used rgba(255,152,0 ,1) ==== gray used rgba(96,125,139 ,0.8) ====
+
+.background{
+	background: url('../img/cover2.jpg') no-repeat fixed;
+	background-size: cover;
+	height: 700px;
+	position: relative;
+}
+
+.layer{
+	background-color: rgba(98, 77, 110, 0.7);
+    position: absolute;
+    top: 20%;
+    left: 0;
+    width: 100%;
+    height: 460px;
+}
+
+.login_box label,i{
+	color:white;
+}
+
+.login_box .fa{
+	margin: 3px;
+}
+
+.login_box h3{
+	text-align: center;
+	color:white;
+}
+
+.btn-styled{
+	width: 80px;
+	color:rgba(98,77,110, 0.9);
+	background-color: white;
+}
+
+.btn-styled:hover{
+	background-color:rgba(98,77,110, 0.9);
+	color: white;
+}
+
+.navbar-styled{
+	background-color:rgba(96,125,139 ,0.8);
+	color:white;
+}
+
+.navbar{
+	margin-bottom: 0 !important;
+}
+
+.navbar-styled .navbar-nav li a{
+	color:white;
+}
+
+.navbar-styled .navbar-nav li a:hover{
+	color:rgba(96,125,139 ,0.8);
+	background-color: white;
+}
+
+
+
+.odd-class{
+	color:rgba(255,152,0 ,1);
+	padding: 5% 0 5% 0;
+}
+
+.even-class{
+	background-color:rgba(96,125,139 ,0.8);
+	color:white;
+	padding: 5% 0 5% 0;
+}
+
+#teachers-modal-header{
+	background-color:rgba(255,152,0 ,1);
+	color:white;
+}
+
+.btn-styled2{
+	background-color:rgba(255,152,0 ,1);
+	color: white;
+}
+
+#signup-teachers{
+	background-color: rgba(96,125,139 ,0.8);
+}
+
+.signup{
+	margin-top: 4%;
+	margin-right: 3%;
+	margin-left: 3%;
+	border: 2px solid rgba(255,152,0 ,1);
+	background-color: white;
+	height: 100%;
+	border-radius: 2px;
+}
+
+.signup label,h3,h1{
+	padding-left: 1%;
+}
+
+.signup h1{
+	color:rgba(96,125,139 ,0.8);
+}
+
+
+.filled{
+	background-color: white;
+	height: 100%;
+	margin: 1%;
+	text-align: center;
+	border: 1px solid rgba(255,152,0 ,1);
+}
+
+.profile{
+	padding-top: 10px;
+}
+
+.profile img{
+	border-radius: 50px;
+	border: 1px solid rgba(255,152,0 ,1);
+}
+
+.blockquote{
+	text-align: left;
+	margin-left: 3%;
+	padding-left: 3%;
+	border-left: 3px solid rgba(255,152,0 ,1);
+}
+.blockquote h6{
+	text-align: right;
+	padding-right: 3%;
+	margin-right: 3%;
+}
+
+.history{
+	padding: 2%;
+}
+
+.calendar-container{
+	height: 700px;
+}
+
+.session-card{
+	margin:9%;
+	border: 1px solid rgba(255,152,0 ,1);
+	padding: 1%;
+}
+.session-card a{
+	margin-bottom: 2%;
+}
+
+.footer{
+	background-color:white;
+	width: 100%;
+	height: 50px;
+	text-align: center;
+}
