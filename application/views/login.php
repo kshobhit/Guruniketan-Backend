@@ -48,7 +48,7 @@
                 <?php echo form_close(); ?>
 
               <center>
-                <a href="<?php echo base_url();?>index.php/User_authentication"><i class="fa fa-facebook-square fa-4x"></i></a>
+                <a href="<?php echo base_url();?>index.php/Fb_authentication"><i class="fa fa-facebook-square fa-4x"></i></a>
                 <a href="<?php echo base_url();?>index.php/Google_authentication"><i class="fa fa-google-plus-square fa-4x"></i></a>
 
                 <br><br>

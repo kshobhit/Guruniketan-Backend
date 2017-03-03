@@ -51,7 +51,7 @@ if(!empty($authUrl)) {
     echo '<p><b>Locale : </b>' . $userData['user_locale'].'</p>';
     echo '<p><b>FB Profile Link : </b>' . $userData['user_profile_url'].'</p>';
     echo '<p><b>You are login with : </b>Facebook</p>';
-    echo '<p><b>Logout from <a href="'.base_url().'index.php/user_authentication/logout">Facebook</a></b></p>';
+    echo '<p><b>Logout from <a href="'.base_url().'index.php/Fb_authentication/logout">Facebook</a></b></p>';
     echo '</div>';
     ?>
 </div>

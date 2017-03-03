@@ -113,7 +113,7 @@ class FacebookApiException extends Exception
  * implement the four abstract methods listed at the bottom of
  * the file.
  *
- * @author Naitik Shah <naitik@facebook.com>
+ * 
  */
 abstract class BaseFacebook
 {

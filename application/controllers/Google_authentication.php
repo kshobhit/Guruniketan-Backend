@@ -1,9 +1,11 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed');
+/* Author Shobhit */
 class Google_Authentication extends CI_Controller
 {
     function __construct() {
 		parent::__construct();
 		// Load user model
+        $this->CI =& get_instance();
 		$this->load->model('DB_access');
     }
     
@@ -11,24 +13,19 @@ class Google_Authentication extends CI_Controller
 		// Include the google api php libraries
 		include_once APPPATH."libraries/google-api-php-client/Google_Client.php";
 		include_once APPPATH."libraries/google-api-php-client/contrib/Google_Oauth2Service.php";
-		
-		// Google Project API Credentials
-		$clientId = '226599645213-kmt115ddkqupli7vba750k5bud2r5mca.apps.googleusercontent.com';
-        $clientSecret = 'duD69_d6gLQvsloVmJGZV2CE';
-        $redirectUrl = base_url() . 'index.php/google_authentication/';
-		
+								
 		// Google Client Configuration
         $gClient = new Google_Client();
-        $gClient->setApplicationName('Login to GuruNiketan.com');
-        $gClient->setClientId($clientId);
-        $gClient->setClientSecret($clientSecret);
-        $gClient->setRedirectUri($redirectUrl);
+        $gClient->setApplicationName($this->CI->config->item('application_name'));
+        $gClient->setClientId($this->CI->config->item('client_id'));
+        $gClient->setClientSecret($this->CI->config->item('client_secret'));
+        $gClient->setRedirectUri($this->CI->config->item('redirect_url'));
         $google_oauthV2 = new Google_Oauth2Service($gClient);
 
         if (isset($_REQUEST['code'])) {
             $gClient->authenticate();
             $this->session->set_userdata('token', $gClient->getAccessToken());
-            redirect($redirectUrl);
+            redirect($this->CI->config->item('redirect_url'));
         }
 
         $token = $this->session->userdata('token');
