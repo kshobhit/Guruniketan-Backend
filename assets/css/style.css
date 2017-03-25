@@ -156,3 +156,9 @@
 	height: 50px;
 	text-align: center;
 }
+.errors{
+     padding: 10px;
+     color: red;
+     background-color: #ddd;
+     border: 1px solid #ccc;	
+}

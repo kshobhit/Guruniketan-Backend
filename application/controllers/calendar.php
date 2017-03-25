@@ -10,7 +10,7 @@ class Calendar extends CI_Controller
  * Returns an authorized API client.
  * @return Google_Client the authorized client object
  */
- public function index() {
+ public function getclient() {
 
   // Include the google api php libraries
     include_once APPPATH."libraries/google-api-php-client/Google_Client.php";
@@ -18,11 +18,11 @@ class Calendar extends CI_Controller
 
 
   
-  $client = new Google_Client();
-  $client->setApplicationName($this->CI->config->item('Application_Name'));
-  $client->setScopes(SCOPES);
-  $client->setAuthConfig(CLIENT_SECRET_PATH);
-  $client->setAccessType('offline');
+  $gclient = new Google_Client();
+  $gclient->setApplicationName($this->CI->config->item('Application_Name'));
+  $gClient->setClientId($this->CI->config->item('Client_Id'));
+  $gClient->setClientSecret($this->CI->config->item('Client_Secret'));
+  $gclient->setAccessType('offline');
 
   // Load previously authorized credentials from a file.
   $credentialsPath = expandHomeDirectory(CREDENTIALS_PATH);
@@ -31,12 +31,11 @@ class Calendar extends CI_Controller
   } else {
     // Request authorization from the user.
     $authUrl = $client->createAuthUrl();
-    printf("Open the following link in your browser:\n%s\n", $authUrl);
-    print 'Enter verification code: ';
+    
     $authCode = trim(fgets(STDIN));
 
     // Exchange authorization code for an access token.
-    $accessToken = $client->fetchAccessTokenWithAuthCode($authCode);
+    $accessToken = $gclient->fetchAccessTokenWithAuthCode($authCode);
 
     // Store the credentials to disk.
     if(!file_exists(dirname($credentialsPath))) {
@@ -45,14 +44,14 @@ class Calendar extends CI_Controller
     file_put_contents($credentialsPath, json_encode($accessToken));
     printf("Credentials saved to %s\n", $credentialsPath);
   }
-  $client->setAccessToken($accessToken);
+  $gclient->setAccessToken($accessToken);
 
   // Refresh the token if it's expired.
-  if ($client->isAccessTokenExpired()) {
-    $client->fetchAccessTokenWithRefreshToken($client->getRefreshToken());
+  if ($gclient->isAccessTokenExpired()) {
+    $gclient->fetchAccessTokenWithRefreshToken($client->getRefreshToken());
     file_put_contents($credentialsPath, json_encode($client->getAccessToken()));
   }
-  return $client;
+  return $gclient;
 }
 
 /**

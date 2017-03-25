@@ -37,6 +37,7 @@ class Google_Authentication extends CI_Controller
             $userProfile = $google_oauthV2->userinfo->get();
             // Preparing data for database insertion
 			$userData['oauth_provider'] = 'google';
+            $userData['activated'] = '1';
 			$userData['oauth_uid'] = $userProfile['id'];
             $userData['user_fname'] = $userProfile['given_name'];
             $userData['user_lname'] = $userProfile['family_name'];

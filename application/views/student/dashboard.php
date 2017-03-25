@@ -41,6 +41,7 @@
         <img src="./assets/img/user-icon.png" class="icon-img" height="100" width="100">
         <h3>User Name</h3>
         <h5><a href="<?php echo base_url();?>index.php/validate/student_edit_profile">Update your Profile</a></h5>
+        <h5><a href="<?php echo base_url();?>index.php/validate/logout">Logout</a></h5>
    </div>
 
    <!-- History And Session -->
@@ -83,14 +84,14 @@
       <h3>Std X</h3>
       <h4>Mathematics</h4>
       <h4>7 PM IST</h4>
-      <a href="#" class="btn btn-warning">Join Here</a>
+      <a href="<?php echo base_url();?>index.php/RequestHandler" class="btn btn-warning">Join Here</a>
       <br>
     </div>
      <div class="session-card">
       <h3>Standard</h3>
       <h4>Subject</h4>
       <h4>Timing</h4>
-      <a href="#" class="btn btn-warning">Join Here</a>
+      <a href="<?php echo base_url();?>index.php/RequestHandler" class="btn btn-warning">Join Here</a>
       <br>
     </div> 
 

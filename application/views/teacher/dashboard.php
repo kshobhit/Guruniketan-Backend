@@ -39,6 +39,7 @@
         <img src="./assets/img/user-icon.png" class="icon-img" height="100" width="100">
         <h3>User Name</h3>
         <h5><a href="<?php echo base_url();?>index.php/validate/teacher_edit_profile">Update your Profile</a></h5>
+        <h5><a href="<?php echo base_url();?>index.php/validate/logout">Logout</a></h5>
    </div>
 
    <!-- History And Session -->

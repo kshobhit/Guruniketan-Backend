@@ -9,5 +9,5 @@ $config['application_name'] = "GuruNiketan";
 // Your application's API key (can be used for fetching public data without oAuth2)
 $config['api_key'] = "";
 // Your application's redirect URL (will be used to redirect user)
-$config['redirect_url']= "http://localhost/codeigniter/index.php/google_authentication";
+$config['redirect_url']= "http://localhost/codeigniter/index.php/google_authentication/";
 ?>

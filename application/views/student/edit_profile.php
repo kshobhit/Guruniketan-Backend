@@ -117,7 +117,7 @@
         </div>
 
       
-       <center><input type="submit" class="btn btn-warning" value="Sign Up"></center>
+       <center><input type="submit" class="btn btn-warning" value="Confirm"></center>
 <br><br>
       </form>
 
