@@ -9,7 +9,7 @@ class Access extends CI_Controller {
  {
  	$this->load->helper('form');
  	$this->load->helper(array('url'));
- 	$this->load->view('login');
+ 	$this->load->view('home');
  }
 
 }

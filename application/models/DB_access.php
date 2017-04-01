@@ -17,7 +17,7 @@ class DB_access extends CI_Model
     function login($email, $password)
     {
         $array = array('user_email' => $email,'user_pwd' => MD5($password));
-        $this -> db -> select('reg_id,user_email,user_pwd');
+        $this -> db -> select('reg_id,user_email,user_fname,user_pwd');
         $this -> db -> from('table_registration');
         $this -> db -> where($array);
        
@@ -120,22 +120,56 @@ function updatePassword($post)
         }        
         return true;
     } 
+
+ function addUser() 
+ {
+     $data=array(
+        'user_email'=>$this->input->post('user_email'),
+        'reg_type'=>$this->input->post('reg_type'),
+        'user_pwd'=>MD5($this->input->post('user_password')),
+        );
+        $this->db->insert('table_registration',$data);
+     //   $this->db->insert('table_login',$data);
+ }   
     
    
     /*
      Adding teacher email to database
     */ 
      
-    function add_teacher_email()
+    function add_teacher_email($email)
      {
         $data=array(
-        'user_email'=>$this->input->post('user_email'),
+        'user_email'=>$email,
         'reg_type'=>'teacher',
       // 'user_pwd'=>MD5($this->input->post('user_pwd')),
         );
         $this->db->insert('table_registration',$data);
      //   $this->db->insert('table_login',$data);
         
+     }
+
+
+     function mailExist($email)
+     {
+        $array = array('user_email' => $email);
+        $this -> db -> select('reg_id,user_email');
+        $this -> db -> from('table_registration');
+        $this -> db -> where($array);
+       
+        $this -> db -> limit(1);   
+      $query = $this -> db -> get();
+ 
+        if($query -> num_rows() == 1)
+        {
+           // print_r ($query->result());
+            return $query->result();
+
+        }
+        else
+        {
+            return false;
+        }
      }
 
     function registerTeacher()
@@ -146,7 +180,7 @@ function updatePassword($post)
             'user_pwd'=>MD5($this->input->post('user_password'))
             );
         $this->db->insert('table_registration',$data);
-        $this->db->insert('table_login',$data);
+     //   $this->db->insert('table_login',$data);
     } 
 
 
@@ -163,6 +197,18 @@ function updatePassword($post)
     //    $this->db->insert('table_login',$data);
     } 
 
+    function upload_path()
+    {
+       $userID = $this->session->userdata['logged_in']['id'];
+        $upload_data = $this->upload->data();
+        $data = array(
+            'user_profilepic' =>$upload_data['full_path'],
+
+            );
+        $this->db->where('reg_id',$userID);
+        $this->db->update('table_registration',$data); 
+    }
+
   
      function add_teacher()
      {
@@ -173,8 +219,9 @@ function updatePassword($post)
         'user_lname'=> $this->input->post('lname'),
         'user_dob'=>  date( 'Y-m-d', strtotime( $this->input->post('date'))),
         'user_qualification'=> $this->input->post('qualification'),
-        'user_experience_years'=> $this->input->post('exp-years'),
-        'user_experience_months'=> $this->input->post('exp-months'),
+        'user_institution'=> $this->input->post('eduinst'),
+        'user_exp_years'=> $this->input->post('exp-years'),
+        'user_exp_months'=> $this->input->post('exp-months'),
         'user_board'=> $this->input->post('board'),
         'user_class'=> $this->input->post('class'),
         'user_city'=> $this->input->post('city'),
@@ -182,13 +229,21 @@ function updatePassword($post)
         'user_country'=> $this->input->post('country'),
         'user_pincode'=> $this->input->post('pincode'),
         'user_contact'=> $this->input->post('phone'),
+        'user_pwd'=> MD5($this->input->post('password')),
+
     
         
         );
-        $this->db->where('user_email',$this->session->userdata['logged_in']['user_email']);
+        $this->db->where('reg_id',$this->session->userdata['registered']['id']);
         return $this->db->update('table_registration',$data);
         
     
+     }
+
+     function updateTeacher($option)
+     {
+        $this->db->where('reg_id',$id);
+        return $this->db->update('table_registration',$option);
      }
      
      function add_student()
@@ -213,7 +268,7 @@ function updatePassword($post)
     //    'user_pwd'=>MD5($this->input->post('password')),
         
         );
-        $this-> db ->where('user_email',$this->session->userdata['logged_in']['user_email']);
+        $this-> db ->where('user_email',$this->session->userdata['logged_in']['email']);
         $this-> db ->update('table_registration',$data);
         
      }
@@ -282,11 +337,8 @@ function updatePassword($post)
      //activate account
     function verify_user($key){
        // echo $key;
-
-
         $data = array( 'activated' => 1);
-        $this-> db -> where('md5(user_email)',$key);
-       
+        $this-> db -> where('md5(user_email)',$key);       
        return $this-> db -> update('table_registration',$data);    //update status as 1 to make active user
             
 

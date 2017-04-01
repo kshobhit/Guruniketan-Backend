@@ -1,8 +1,10 @@
 <?php 
+
 if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 /* @author shobhit  14/11/2016 
    controller for login and registeration
 */
+  
  
 class Validate extends CI_Controller {
  public $variable = 'student';
@@ -10,50 +12,75 @@ class Validate extends CI_Controller {
  function __construct()
  {
    parent::__construct();
+   $this->load->library('email');
    $this->load->model('DB_access','',TRUE);
    $this->CI =& get_instance();
-   $this->load->library('form_validation');
    $this->load->helper('form');
+
   
  }
- 
+
+
+ function index()
+ {
+  $this->load->view('home');
+ }
+
+ function teacher_details()
+ {
+  $this->load->view('teacher/details');
+ }
+
  function login()
  {
    //This method will have the credentials validation
    $this->form_validation->set_rules('user_email', 'email', 'trim|required|valid_email');
-   $this->form_validation->set_rules('txt_password', 'password', 'trim|required|callback_check_database');
+   $this->form_validation->set_rules('user_password', 'password', 'trim|required|callback_check_database');
     
   
     
    if($this->form_validation->run() == FALSE)
    {
      //Field validation failed.  User redirected to login page
+    
      $this->load->view('login');
-
+     
    }
    else
    {
-    //If type is student load student dashboard
-  
-    $result1 = $this->DB_access->get_reg_type($this->input->post('user_email'));
-     
-     if($result1 == $this->variable)
-      {
-        //$email = $this->session->userdata['logged_in']['user_email'];
-        //echo $email;
-       $this->load->view('student/dashboard');
-      }
-      //if type is teacher load teacher dashboard
-      else{
-       $this->load->view('teacher/dashboard');
-     }
-     
+    $this->load->view('home');
+         
    }
+  }
+
+
+  function register()
+  {
+     $this->form_validation->set_rules('user_email', 'email', 'trim|required|valid_email');
+     $this->form_validation->set_rules('user_password', 'password', 'trim|required|min_length[6]');
+     $this->form_validation->set_rules('passconf', 'password', 'trim|required|matches[user_password]');
+     $this->form_validation->set_rules('reg_type', 'user type', 'required');
+
+     if($this->form_validation->run() == FALSE)
+     {     
+       $this->load->view('register');
+     }else{
+      $this->DB_access->addUser();
+      $this->send_confirmation($this->input->post('user_email'));
+      $result = $this->DB_access->get_activation_status($this->input->post('user_email'));
+      if($result){
+        $this->load->view('login');
+      }else{
+        $this->load->view('email_unverified');
+      }
+
+     } 
+
   }
 
 /*Reset password*/
 
- function forgot()
+  function forgot()
      {
             
             $this->form_validation->set_rules('user_email', 'Email', 'required|valid_email'); 
@@ -69,8 +96,8 @@ class Validate extends CI_Controller {
                 //print_r ($userInfo->reg_id);
                 
                 if(!$userInfo){
-                    $this->session->set_flashdata('flash_message', 'We cant find your email address');
-                     $this->session->keep_flashdata('flash_message');
+                    //$this->session->set_flashdata('flash_message', 'We cant find your email address');
+                     echo "user email doesn't exist";
                     redirect(base_url().'index.php/validate/login');
                 }   
                                
@@ -86,37 +113,21 @@ class Validate extends CI_Controller {
                 $message .= '<strong>Please click:</strong> ' . $link;
                 $message .='<br><br>Thanks<br>GuruNiketanTeam,'; 
 
-         
-                  $config['protocol'] = 'smtp';
-                  $config['smtp_host'] = 'ssl://smtp.gmail.com';
-                  $config['smtp_port'] = '465';
-                  $config['smtp_user'] = 'adguruniketan@gmail.com';
-                  $config['smtp_pass'] = 'guruniketan123';  //sender's password
-                  $config['mailtype'] = 'html';
-                  $config['validate'] = FALSE;
-                  $config['charset'] = 'iso-8859-1';
-                  $config['wordwrap'] = 'TRUE';
-                  $config['newline'] = "\r\n"; 
-
-                  $this->load->library('email',$config);
-                  $this->email->initialize($config);
-
                   $this->email->from('adguruniketan@gmail.com','GuruNiketan'); //sender's email
                   $this->email->to($email);
                   $this->email->subject($this->CI->config->item('reset_subject'));
                   $this->email->message($message);
                   if($this->email->send())
                   {
-                    $this->load->view('reset_link');
+                    // $this->load->view('inc/header');
+                    $this->load->view('reset/reset_link');
+                   // $this->load->view('inc/footer');
                   }else{
                     echo 'email has not been sent';//view
                   }
 
-                
-                
-            
-            }    
-   }         
+                }    
+    }         
 
 
 function reset_password()
@@ -141,9 +152,9 @@ function reset_password()
             $this->form_validation->set_rules('passconf', 'Password Confirmation', 'required|matches[password]');              
             
             if ($this->form_validation->run() == FALSE) {   
-               // $this->load->view('header');
-                $this->load->view('reset_passwordform', $data);
-               // $this->load->view('footer');
+              // $this->load->view('inc/header');
+               $this->load->view('reset/reset_passwordform', $data);
+              //$this->load->view('inc/footer');
             }else{
                                 
                 $this->load->library('Password');                 
@@ -167,34 +178,159 @@ function reset_password()
   //funtion for verifying email of teacher on teacher's detail page
   function teacher_email_verification()
      {
-      // field name, error message, validation rules
-    
+      
       $this->form_validation->set_rules('user_email', 'Your Email', 'trim|required|valid_email');
     
        if($this->form_validation->run() == FALSE)
        {
          $this->load->view('error');
        }
+
       else
       {
-        //call db to add user
-        $this->DB_access->add_teacher_email();
+        $email = $this->input->post('user_email');
+        $this->DB_access->add_teacher_email($email);
+
+        $result1 = $this->DB_access->mailExist($email);
+        if($result1)
+        {
+          $sess_array = array();
+          foreach($result1 as $row)
+          {
+              $sess_array = array(
+              'email' => $row->user_email,
+              'id' => $row->reg_id,
+               );
+             $this->session->set_userdata('registered', $sess_array);
+         
+          }
+        }else{     
+            $this->form_validation->set_message('check_database', 'User email doesn\'t exist');   
+          }
+        
         //sending confirmation mail
-        $this->send_confirmation($this->input->post('user_email'));
+        $this->send_confirmation_teacher($email);
         // call db and get activation status
-        $result = $this->DB_access->get_activation_status($this->input->post('user_email'));
+        $result = $this->DB_access->get_activation_status($email);
         //if activation status is 1,user will be able to fill signup form
 
         if($result)
         {
-          $this->load->view('teacher/signup');
+          // $this->load->view('inc/header');
+          echo "i am in teacher_email_verification";
+          // $this->load->view('inc/footer');
         }else{
           //viewing email not verified//
+         // $this->load->view('inc/header');
           $this->load->view('email_unverified');
+         // $this->load->view('inc/footer');
         } 
        }
-      } 
+     } 
 
+
+
+  function teacher_registration()
+  {
+    // field name, error message, validation rules
+      $this->form_validation->set_rules('fname', 'firstname', 'trim|required');
+      $this->form_validation->set_rules('mname', 'middlename', 'trim|required');
+      $this->form_validation->set_rules('lname', 'lastname', 'trim|required');
+      $this->form_validation->set_rules('date', 'DOB', 'required');
+      $this->form_validation->set_rules('qualification', 'Qualification', 'required');
+      $this->form_validation->set_rules('exp-years', 'experience_in_years', 'trim|required');
+      $this->form_validation->set_rules('exp-months', 'experience_in_months', 'trim|required');
+      $this->form_validation->set_rules('board', 'board_affiliation', 'trim|required');
+      $this->form_validation->set_rules('class', 'class', 'trim|required');
+      $this->form_validation->set_rules('eduinst', 'Educational Institute ', 'trim|required');
+      $this->form_validation->set_rules('city', 'city', 'alpha|trim|required');
+      $this->form_validation->set_rules('state', 'state', 'required');
+      $this->form_validation->set_rules('country', 'country', 'trim|required');
+      $this->form_validation->set_rules('pincode', 'pincode', 'numeric|trim|required|exact_length[6]');
+      $this->form_validation->set_rules('phone', 'contact', 'numeric|trim|required');            
+      $this->form_validation->set_rules('password', 'Password', 'trim|required|min_length[4]|max_length[32]');
+      $this->form_validation->set_rules('confirmpass', 'Password Confirmation', 'trim|required|matches[password]');
+
+
+      if($this->form_validation->run() == FALSE)
+       {
+         $this->load->view('teacher/formregistration');
+       }
+      else
+      {
+        //call db to add teacher
+       if ($this->DB_access->add_teacher()){
+         $link_address = base_url() . 'index.php/validate/logout/';
+         echo "Registeration sucessfull <a href='$link_address'>Please Login To Continue</a>";
+       }else{
+        echo "Nothing inserted";
+       }
+                   
+      }
+
+  } 
+
+
+ function teacher_edit_profile()
+  {
+    $id=$this->session->userdata['logged_in']['id'];
+    $is_submit = $this->input->post('is_submit');
+    echo $is_submit;
+
+  /*  if(isset($is_submit) && $is_submit == 1){
+      $options =array(
+
+        'user_exp_years'=>$this->input->post('exp-years'),
+        'user_exp_months'=>$this->input->post('exp-months'),
+        'user_institution'=>$this->input->post('eduinst'),
+        'user_city'=>$this->input->post('city'),
+        'user_state'=>$this->input->post('state'),
+        'user_country'=>$this->input->post('country'),
+        'user_pincode'=>$this->input->post('pincode'),
+        'user_contact'=>$this->input->post('phone')
+
+
+        );
+      $affected = $this->DB_access->updateTeacher($options,$id);
+      if($affected) $link_address = base_url() . 'index.php/validate/logout/';
+         echo "profile updated <a href='$link_address'>Please Login To Continue</a>";;
+
+    }
+    $previous['data']=$this->DB_access->getUserInfo($id);
+    $this->load->view('teacher/formeditprofile',$previous);
+   */        
+  }  
+
+  function TeacherProfileValidation()
+  {
+
+      $this->form_validation->set_rules('exp-years', 'experience_in_years', 'trim|required');
+      $this->form_validation->set_rules('exp-months', 'experience_in_months', 'trim|required');
+      $this->form_validation->set_rules('eduinst', 'Educational Institute ', 'trim|required');
+      $this->form_validation->set_rules('city', 'city', 'alpha|trim|required');
+      $this->form_validation->set_rules('state', 'state', 'required');
+      $this->form_validation->set_rules('country', 'country', 'trim|required');
+      $this->form_validation->set_rules('pincode', 'pincode', 'numeric|trim|required|exact_length[6]');
+      $this->form_validation->set_rules('phone', 'contact', 'numeric|trim|required');            
+
+
+
+      if($this->form_validation->run() == FALSE)
+       {
+         $this->load->view('teacher/formre');
+       }
+      else
+      {
+        //call db to add teacher
+       if ($this->DB_access->add_teacher()){
+         $link_address = base_url() . 'index.php/validate/logout/';
+         echo "Registeration sucessfull <a href='$link_address'>Please Login To Continue</a>";
+       }else{
+        echo "Nothing inserted";
+       }
+                   
+      }
+  }
 
 
   function teacherSignup()
@@ -212,10 +348,11 @@ function reset_password()
 
         $this->DB_access->registerTeacher();
         $this->send_confirmation($this->input->post('user_email'));
+       // $this->load->view('inc/header');
         $this->load->view('email_unverified');
-    
+        //$this->load->view('inc/footer');
        }
-      } 
+   } 
 
 
   function studentSignup()
@@ -236,79 +373,48 @@ function reset_password()
         $this->load->view('email_unverified');
         
         } 
-       }
-         
+   }
+       
 
-
- function teacher_edit_profile()
-  {
-    $email = $this->session->userdata['logged_in']['user_email'];;
-    //echo $email;
-    if($this->DB_access->get_activation_status($email))
-    {
-      $this->load->view('teacher/update_profile1');
-    }else{
-      echo 'Email has not yet been verified';
-    }
-    
-          
-  }      
-
-        
-
-
-   
-
-  function teacher_registration()
-  {
-    // field name, error message, validation rules
-      $this->form_validation->set_rules('fname', 'firstname', 'trim|required');
-      $this->form_validation->set_rules('mname', 'middlename', 'trim|required');
-      $this->form_validation->set_rules('lname', 'lastname', 'trim|required');
-      $this->form_validation->set_rules('date', 'DOB', 'required');
-      $this->form_validation->set_rules('qualification', 'Qualification', 'required');
-      $this->form_validation->set_rules('exp-years', 'experience_in_years', 'trim|required');
-      $this->form_validation->set_rules('exp-months', 'experience_in_months', 'trim|required');
-      $this->form_validation->set_rules('board', 'board_affiliation', 'trim|required');
-      $this->form_validation->set_rules('class', 'class', 'trim|required');
-      //yet to validate this 
-      $this->form_validation->set_rules('city', 'city', 'alpha|trim|required');
-      $this->form_validation->set_rules('state', 'state', 'required');
-      $this->form_validation->set_rules('country', 'country', 'trim|required');
-      $this->form_validation->set_rules('pincode', 'pincode', 'numeric|trim|required|exact_length[6]');
-      $this->form_validation->set_rules('phone', 'contact', 'numeric|trim|required');            
-    // $this->form_validation->set_rules('password', 'Password', 'trim|required|min_length[4]|max_length[32]');
-    //  $this->form_validation->set_rules('confirmpass', 'Password Confirmation', 'trim|required|matches[password]');
-
-      if($this->form_validation->run() == FALSE)
-       {
-         $this->load->view('teacher/update_profile1');
-       }
-      else
+  function userDashboard(){
+    $email =$this->session->userdata['logged_in']['email'];
+     $result = $this->DB_access->get_reg_type($email);
+     
+     if($result == $this->variable)
       {
-        //call db to add teacher
-       if ($this->DB_access->add_teacher()){
-         $link_address = base_url() . 'index.php/validate/logout/';
-         echo "Updation sucessfull <a href='$link_address'>Logout</a>";
-       }else{
-        echo "Nothing inserted";
-       }
-                   
+        //$email = $this->session->userdata['logged_in']['user_email'];
+        
+       $this->load->view('student/dashboard');
+      
       }
+      //if type is teacher load teacher dashboard
+      else{
+      // $this->load->view('inc/header');
+       $this->load->view('teacher/dashboard');
+      // $this->load->view('inc/footer');
+     }
 
-  } 
 
+  }
+
+  function teacher_dashboard()
+  {
+    $this->load->view('teacher/dashboard');
+  }    
+     
    
 
 
-
+  
   function student_edit_profile()
   {
     $email = $this->session->userdata['logged_in']['user_email'];;
     //echo $email;
     if($this->DB_access->get_activation_status($email))
     {
+       $this->load->view('inc/header');
       $this->load->view('student/update_profile1');
+       $this->load->view('inc/footer');
     }else{
       echo 'Email has not yet been verified';
     }
@@ -337,7 +443,9 @@ function reset_password()
 
       if($this->form_validation->run() == FALSE)
        {
+           $this->load->view('inc/header');
          $this->load->view('student/update_profile1');
+          $this->load->view('inc/footer');
        }
       else
       {
@@ -351,13 +459,11 @@ function reset_password()
 
   }
 
-
-  
-
+ 
 
 
- function check_database($password)
- {
+  function check_database($password)
+  {
    //Field validation succeeded.  Validate against database
    $user_email = $this->input->post('user_email');
    
@@ -371,9 +477,10 @@ function reset_password()
      foreach($result as $row)
      {
        $sess_array = array(
-        'user_email' => $row->user_email,
-        'user_pwd' => $row->user_pwd,
-        'reg_id' => $row->reg_id,
+        'email' => $row->user_email,
+        'password' => $row->user_pwd,
+        'id' => $row->reg_id,
+        'name' =>$row->user_fname,
        );
        $this->session->set_userdata('logged_in', $sess_array);
        ;
@@ -393,21 +500,7 @@ function reset_password()
     
       $message = "<br>Dear User,<br><br> Please Verify your email address";
       $message.="<a href='". base_url() . "index.php/validate/verifyEmail/". md5($reciever) ."'> Click here to continue!</a><br><br>Thanks,<br>GuruNiketan Team,";
-   
-       //config email settings
-        $config['protocol'] = 'smtp';
-        $config['smtp_host'] = 'ssl://smtp.gmail.com';
-        $config['smtp_port'] = '465';
-        $config['smtp_user'] = 'adguruniketan@gmail.com';
-        $config['smtp_pass'] = 'guruniketan123';  //sender's password
-        $config['mailtype'] = 'html';
-        $config['validate'] = FALSE;
-        $config['charset'] = 'iso-8859-1';
-        $config['wordwrap'] = 'TRUE';
-        $config['newline'] = "\r\n"; 
-
-      $this->load->library('email', $config);
-        $this->email->initialize($config);
+         
 
       $this->email->from('adguruniketan@gmail.com','GuruNiketan'); //sender's email
       $this->email->to($reciever);
@@ -416,11 +509,40 @@ function reset_password()
       $this->email->send();
     }
 
+
+
+  function send_confirmation_teacher($reciever) {
+    
+      $message = "<br>Dear User,<br><br> Please Verify your email address";
+      $message.="<a href='". base_url() . "index.php/validate/verifyEmailTeacher/". md5($reciever) ."'> Click here to continue!</a><br><br>Thanks,<br>GuruNiketan Team,";
+      
+      $this->email->from('adguruniketan@gmail.com','GuruNiketan'); //sender's email
+      $this->email->to($reciever);
+      $this->email->subject($this->CI->config->item('email_subject'));
+      $this->email->message($message);
+      $this->email->send();
+    }
+
+
   function verifyEmail($hash){
         //verifying against database
         if($this->DB_access->verify_user($hash)){
             $this->session->set_flashdata('verify', '<div class="alert alert-success text-center">Email address is confirmed. Please login to the system</div>');
             redirect('validate/login/');
+          }
+                
+        else{
+            $this->session->set_flashdata('verify', '<div class="alert alert-danger text-center">Email address is not confirmed. Please try to re-register.</div>');
+            // redirect('validate/login');
+        }
+    }
+
+
+  function verifyEmailTeacher($hash){
+        //verifying against database
+        if($this->DB_access->verify_user($hash)){
+            $this->session->set_flashdata('verify', '<div class="alert alert-success text-center">Email address is confirmed. Please login to the system</div>');
+            redirect('validate/teacher_registration');
           }
                 
         else{
@@ -440,14 +562,16 @@ function base64url_decode($data) {
   function logout()
    {
     $sess_array = array(
-    'user_email'   =>'',
-    'user_pwd'     => '',
-    'reg_id'        => '',
+    'email'   =>'',
+    'password'     => '',
+    'id'        => '',
+    'name' => '',
     'logged_in' => FALSE,
+    'registered' => FALSE,
     );
     $this->session->unset_userdata($sess_array);
     $this->session->sess_destroy();
-    redirect(base_url().'index.php/validate/login');
+    redirect(base_url().'index.php/validate/');
    }
 
 }

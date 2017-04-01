@@ -11,8 +11,8 @@
     <link href="<?php echo base_url('assets/css/bootstrap.min.css'); ?>" rel="stylesheet">
     <link href="<?php echo base_url('assets/css/style.css'); ?>" rel="stylesheet">
 
-
-  <script src=<script src="<?php echo base_url('assets/js/bootstrap.min.js'); ?>"></script>
+     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+  <script src="<?php echo base_url('assets/js/bootstrap.min.js'); ?>"></script>
     <!-- Font Awesome Icons -->
   <script src="https://use.fontawesome.com/0fd0e3f0a4.js"></script>
 
@@ -38,8 +38,8 @@
   <div class="col-lg-3">
   <!-- Profile Section -->
     <div class="profile filled">
-        <img src="./assets/img/user-icon.png" class="icon-img" height="100" width="100">
-        <h3>User Name</h3>
+        <img src="<?php echo base_url('assets/img/user-icon.png'); ?>" class="icon-img" height="100" width="100">
+         <h5><a href="<?php echo base_url();?>index.php/upload">change Profile Pic</a></h5>
         <h5><a href="<?php echo base_url();?>index.php/validate/student_edit_profile">Update your Profile</a></h5>
         <h5><a href="<?php echo base_url();?>index.php/validate/logout">Logout</a></h5>
    </div>
@@ -70,6 +70,7 @@
     <div class="calendar-container filled">
 
     <h1>Students' Dashboard</h1>
+    <iframe src="https://calendar.google.com/calendar/embed?height=600&amp;wkst=1&amp;bgcolor=%23FFFFFF&amp;src=shobhit.kumar%40sunarchventures.com&amp;color=%231B887A&amp;ctz=Asia%2FCalcutta" style="border-width:0" width="600" height="600" frameborder="0" scrolling="no"></iframe>
 
     </div>    
 

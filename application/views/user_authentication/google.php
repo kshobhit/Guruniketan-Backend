@@ -35,6 +35,7 @@ color:#999999;
 <?php
 if(!empty($authUrl)) {
 	echo '<a href="'.$authUrl.'"><img src="'.base_url().'assets/images/glogin.png" alt=""/></a>';
+	//echo $reg_type;
 }else{
 
 ?>
@@ -51,6 +52,8 @@ if(!empty($authUrl)) {
     echo '<p><b>Locale : </b>' . $userData['user_locale'].'</p>';
     echo '<p><b>Google+ Link : </b>' . $userData['user_profile_url'].'</p>';
     echo '<p><b>You are login with : </b>Google</p>';
+
+   // echo '<p><b>Go to your <a href="'.base_url().'index.php/validate/teacher_dashboard ">Dashboard</a></b></p>';
     echo '<p><b>Logout from <a href="'.base_url().'index.php/Google_authentication/logout">Google</a></b></p>';
     echo '</div>';
     ?>

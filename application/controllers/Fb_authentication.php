@@ -9,7 +9,7 @@ class Fb_Authentication extends CI_Controller
 		$this->CI =& get_instance();
     }
     
-    public function index(){
+    function teacher(){
 		// Include the facebook api php libraries
 		include_once APPPATH."libraries/facebook-api-php-client/facebook.php";
 		
@@ -28,6 +28,8 @@ class Fb_Authentication extends CI_Controller
 			$userProfile = $facebook->api('/me?fields=id,first_name,last_name,email,gender,locale,picture');
             // Preparing data for database insertion
 			$userData['oauth_provider'] = 'facebook';
+			$userData['activated'] = '1';
+			$userData['reg_type'] = 'teacher';
 			$userData['oauth_uid'] = $userProfile['id'];
             $userData['user_fname'] = $userProfile['first_name'];
             $userData['user_lname'] = $userProfile['last_name'];
@@ -46,7 +48,51 @@ class Fb_Authentication extends CI_Controller
             }
         } else {
 			$fbuser = '';
-            $data['authUrl'] = $facebook->getLoginUrl(array('redirect_uri'=>$this->CI->config->item('redirect_Url'),'scope'=>$fbPermissions));
+            $data['authUrl'] = $facebook->getLoginUrl(array('redirect_uri'=>$this->CI->config->item('redirect_Url_teacher'),'scope'=>$fbPermissions));
+        }
+		$this->load->view('user_authentication/facebook',$data);
+    }
+
+    function student(){
+		// Include the facebook api php libraries
+		include_once APPPATH."libraries/facebook-api-php-client/facebook.php";
+		
+		// Facebook API Configuration
+		$fbPermissions = 'email';
+		
+		//Call Facebook API
+		$facebook = new Facebook(array(
+		  'appId'  => $this->CI->config->item('app_id'),
+		  'secret' => $this->CI->config->item('app_secret')
+		
+		));
+		$fbuser = $facebook->getUser();
+		
+        if ($fbuser) {
+			$userProfile = $facebook->api('/me?fields=id,first_name,last_name,email,gender,locale,picture');
+            // Preparing data for database insertion
+			$userData['oauth_provider'] = 'facebook';
+			$userData['activated'] = '1';
+			$userData['reg_type'] = 'student';
+			$userData['oauth_uid'] = $userProfile['id'];
+            $userData['user_fname'] = $userProfile['first_name'];
+            $userData['user_lname'] = $userProfile['last_name'];
+            $userData['user_email'] = $userProfile['email'];
+			$userData['user_gender'] = $userProfile['gender'];
+			$userData['user_locale'] = $userProfile['locale'];
+            $userData['user_profile_url'] = 'https://www.facebook.com/'.$userProfile['id'];
+            $userData['user_picture_url'] = $userProfile['picture']['data']['url'];
+			// Insert or update user data
+            $userID = $this->DB_access->checkUser($userData);
+            if(!empty($userID)){
+                $data['userData'] = $userData;
+                $this->session->set_userdata('userData',$userData);
+            } else {
+               $data['userData'] = array();
+            }
+        } else {
+			$fbuser = '';
+            $data['authUrl'] = $facebook->getLoginUrl(array('redirect_uri'=>$this->CI->config->item('redirect_Url_student'),'scope'=>$fbPermissions));
         }
 		$this->load->view('user_authentication/facebook',$data);
     }

@@ -5,14 +5,14 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <title> Error </title>
+    <title> Reset password link</title>
 
     <!-- Bootstrap -->
    <link href="<?php echo base_url('assets/css/bootstrap.min.css'); ?>" rel="stylesheet">
     <link href="<?php echo base_url('assets/css/style.css'); ?>" rel="stylesheet">
 
 
-  <script  src="<?php echo base_url('assets/js/bootstrap.min.js'); ?>"></script>
+  <script src=<script src="<?php echo base_url('assets/js/bootstrap.min.js'); ?>"></script>
    <link href="https://fonts.googleapis.com/css?family=Slabo+27px" rel="stylesheet"> 
   <style type="text/css">
     *{
@@ -42,12 +42,17 @@
 <div class="page-wrapper"> 
   <div class="hidden container">
 
-    <h1 style="padding-left: 3%;color:white;"> Error </h1>
+    <h1 style="padding-left: 3%;color:white;"> Link to reset password </h1>
 
     <div class="container styledup">
 
-    <h3> Inaccurate field entry </h3>
-    
+    <h3> Kindly check your email. A link to reset your password has been sent to your email. </h3>
+    <h2 style="text-align: center;">OR</h2>
+
+    <center>
+       <a href="<?php echo base_url();?>index.php/validate/login" class="btn btn-primary" >Login</a>
+
+          </center>
     <br>
     </div>
 

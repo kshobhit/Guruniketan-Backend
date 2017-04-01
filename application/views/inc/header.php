@@ -1,17 +1,17 @@
 <!doctype html>
 <html>
 <head>
-    <title>My Site</title>
+    <title>GuruNiketan</title>
     
 </head>
 <body>
     
-<?php if ($this->session->userdata('user_email') == false):?>
+<?php if ($this->session->userdata('logged_in') == false):?>
 
     <h1>Welcome Home</h1>
 
     <nav>
-        <a href="<?=site_url('dashboard/login')?>">Login</a>
+        <a href="<?=site_url('validate/login')?>">Login</a>
     </nav>
 
 <?php elseif($this->session->userdata('is_admin') == true):?>
@@ -29,7 +29,7 @@
     <nav>
         <a href="<?=site_url('dashboard/home')?>">Dashboard</a> | 
         <a href="<?=site_url('dashboard/account')?>">My Account</a> | 
-        <a href="<?=site_url('dashboard/logout')?>">Logout</a>
+        <a href="<?=site_url('validate/logout')?>">Logout</a>
     </nav>
 
 

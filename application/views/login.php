@@ -12,10 +12,12 @@
     <link href="<?php echo base_url('assets/css/style.css'); ?>" rel="stylesheet">
     <link href="<?php echo base_url('assets/css/dropbtn.css'); ?>" rel="stylesheet">
 
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.7/jquery.min.js"></script>
  <script src="<?php echo base_url('assets/js/bootstrap.min.js'); ?>"></script>
   <script src="<?php echo base_url('assets/js/dropbtn.js'); ?>"></script>
    <!-- Font Awesome Icons -->
-  <script src="https://use.fontawesome.com/0fd0e3f0a4.js"></script>
+    <script src="https://use.fontawesome.com/0fd0e3f0a4.js"></script>
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -25,6 +27,11 @@
     <![endif]-->
   </head>
   <body>
+
+          <nav>
+              <a href="<?=site_url('validate/')?>">Home</a>
+          </nav>
+
     <div class="background"><br>
       <center><h1 style="color:white;">Logo Goes here</h1></center>
     <!-- Layer for login box -->
@@ -33,6 +40,7 @@
 
       <div class="col-lg-8 login_box">
           <h3><i class="fa fa-user"></i> Login </h3><br>
+
           <?php echo form_open("validate/login");?> 
 
               <div class="form-group">
@@ -42,21 +50,21 @@
               </div>
               <div class="form-group">
                 <label for="username">Password</label>
-                <input type="password" id="txt_password" name="txt_password" class="form-control styled" placeholder="Enter yout Password">
-                 <span class="text-danger"><?php echo form_error('txt_password'); ?></span>
+                <input type="password" id="txt_password" name="user_password" class="form-control styled" placeholder="Enter your Password">
+                 <span class="text-danger"><?php echo form_error('user_password'); ?></span>
               </div>
-             
+           <div>
+          <left> <input type="hidden" name="rmShown" value="1">                                      
+            <a id="link-forgot-passwd" class="need-help" href="#myModalForgot" data-toggle="modal" data-target="#myModalForgot">Forgot password? </a></left>
+            </div>
+
              <center><input type="submit" name="btn_login" class="btn btn-styled" value="Login"></center><br>
 
                 <?php echo form_close(); ?>
-            <div>
-            <input type="hidden" name="rmShown" value="1">                                      
-            <a id="link-forgot-passwd" class="need-help" href="#myModalForgot" data-toggle="modal" data-target="#myModalForgot">Forgot password? </a>
-            </div>
 
               <center>
-                <a href="<?php echo base_url();?>index.php/Fb_authentication"><i class="fa fa-facebook-square fa-4x"></i></a>
-                <a href="<?php echo base_url();?>index.php/Google_authentication"><i class="fa fa-google-plus-square fa-4x"></i></a>
+                <a href="<?php echo base_url();?>index.php/Fb_authentication/student"><i class="fa fa-facebook-square fa-4x"></i></a>
+                <a href="<?php echo base_url();?>index.php/Google_authentication/student"><i class="fa fa-google-plus-square fa-4x"></i></a>
 
                 <br><br>
                 <div class="dropdown">                                                           <button onclick="myFunction()" class="dropbtn">Sign Up</button>
@@ -73,7 +81,7 @@
       </div>
     </div>
 
-  <!-- Modal Sign Up for Teacher -->
+  <!-- Modal Sign Up for Teacher 
 <div class="modal fade" id="myModalTeacher" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -82,14 +90,13 @@
         <h4 class="modal-title" id="myModalLabel">Sign Up as Teacher</h4>
       </div>
       <div class="modal-body">
-       
-       
+          
       <center>
           
           <h2>Sign Up with </h2>
 
-                <a href="<?php echo base_url();?>index.php/Fb_authentication"><img src="./assets/img/fb.png" ></a>
-                <a href="<?php echo base_url();?>index.php/Google_authentication"><img src="./assets/img/google.png"></a>
+                <a href="<?php echo base_url();?>index.php/Fb_authentication/teacher"><img src="./assets/img/fb.png" ></a>
+                <a href="<?php echo base_url();?>index.php/Google_authentication/teacher"><img src="./assets/img/google.png"></a>
 
                 <h3>OR
                 <br>
@@ -98,8 +105,6 @@
 
 
       </center>
-
-
 
        <?php echo form_open("validate/teacherSignup");?>
         
@@ -118,8 +123,7 @@
           <label for="confpassword">Confirm Password:</label>
           <input type="password" class="form-control" name="confpassword" placeholder="Confirm your password">
         </div>
-
-
+        
          <div class="modal-footer">
            <button type="submit" class="btn btn-styled2">Sign Up!</button>
         </div>
@@ -128,7 +132,7 @@
   </div>
 </div>
 </div>
-
+-->
 
   <!-- Modal Sign Up for Student -->
 <div class="modal fade" id="myModalStudent" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -145,19 +149,14 @@
           
           <h2>Sign Up with </h2>
 
-                <a href="<?php echo base_url();?>index.php/Fb_authentication"><img src="./assets/img/fb.png" ></a>
-                <a href="<?php echo base_url();?>index.php/Google_authentication"><img src="./assets/img/google.png"></a>
+                <a href="<?php echo base_url();?>index.php/Fb_authentication/student"><img src="<?php echo base_url('assets/img/fb.png'); ?>" ></a>
+                <a href="<?php echo base_url();?>index.php/Google_authentication/student"><img src="<?php echo base_url('assets/img/google.png'); ?>"></a>
 
                 <h3>OR
                 <br>
                 Enter your Details below...
                 </h3>
-
-
       </center>
-
-
-
        <?php echo form_open("validate/studentSignup");?>
        <?php echo validation_errors(); ?>
         <div class="form-group">
@@ -170,10 +169,9 @@
         </div>
         
         <div class="form-group">
-          <label for="confpassword">Password:</label>
+          <label for="confpassword">Confirm Password:</label>
           <input type="password" class="form-control" name="confpassword" placeholder="Confirm your password">
         </div>
-
 
          <div class="modal-footer">
            <button type="submit" class="btn btn-styled2">Sign Up!</button>
@@ -182,6 +180,33 @@
     </div>
   </div>
 </div>
+</div>
+
+
+<div class="modal fade" id="myModalTeacher" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header" id="teachers-modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Sign Up as Teacher</h4>
+      </div>
+      <?php echo form_open("validate/teacher_email_verification");?>  
+      <div class="modal-body">
+        
+        <div class="form-group">
+          <label for="user_email">Email Address:</label>
+          <input type="email" class="form-control" name="user_email" placeholder="Enter your email address to continue">
+
+        </div>
+        
+        <p>You shall receive a validation email to verify your email address before you continue on Guru Niketan.</p>
+        </div>
+         <div class="modal-footer">
+           <button type="submit" class="btn btn-styled2">Sign Up!</button>
+        </div>
+      <?php echo form_close(); ?>
+    </div>
+  </div>
 </div>
  
 
@@ -222,7 +247,7 @@
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
-  <script src="assets/js/bootstrap.min.js"></script>
+  <script src="<?php echo base_url('assets/js/bootstrap.min.js'); ?>"></script>
     <script>
       $(document).ready(function(){
         $('form.jsform').on('submit', function(form){
