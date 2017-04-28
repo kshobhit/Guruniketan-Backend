@@ -97,14 +97,14 @@
     <div class="container">
       <h1> Sign Up As a Teacher!</h1>  
       <h3>Click the button below to start working as a teacher at Guru Niketan.</h3>
-         <button type="button" style="float:right;" class="btn btn-styled2" data-toggle="modal" data-target="#myModal">Sign Up
+         <button type="button" style="float:right;" class="btn btn-styled2" data-toggle="modal" data-target="#myModalTeacher">Sign Up
        </button>
       </div>
     </section>
 
 
   </div>
-  <!-- Modal -->
+  <!-- Modal 
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -129,6 +129,58 @@
       <?php echo form_close(); ?>
     </div>
   </div>
+</div>
+-->
+  <!-- Modal Sign Up for Teacher -->
+<div class="modal fade" id="myModalTeacher" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header" id="teachers-modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Sign Up as Teacher</h4>
+      </div>
+      <div class="modal-body">
+          
+      <center>
+          
+          <h2>Sign Up with </h2>
+
+                <a href="<?php echo base_url();?>index.php/Fb_authentication/teacher"><img src="<?php echo base_url('assets/img/fb.png'); ?>" ></a>
+                <a href="<?php echo base_url();?>index.php/Google_authentication/teacher"><img src="<?php echo base_url('assets/img/google.png'); ?>"></a>
+
+                <h3>OR
+                <br>
+                Enter your Details below...
+                </h3>
+
+
+      </center>
+
+       <?php echo form_open("validate/teacherSignup");?>
+        
+        <div class="form-group">
+          <label for="email">Email Address:</label>
+          <input type="email" class="form-control" name="user_email" placeholder="Enter your email address ">
+          <span class="text-danger"><?php echo form_error('user_email'); ?></span>
+        </div>
+        <div class="form-group">
+          <label for="password">Password:</label>
+          <input type="password" class="form-control" name="user_password" placeholder="Enter your password">
+          <span class="text-danger"><?php echo form_error('user_password'); ?></span>
+        </div>
+        
+        <div class="form-group">
+          <label for="confpassword">Confirm Password:</label>
+          <input type="password" class="form-control" name="confpassword" placeholder="Confirm your password">
+        </div>
+        
+         <div class="modal-footer">
+           <button type="submit" class="btn btn-styled2">Sign Up!</button>
+        </div>
+       <?php echo form_close(); ?>
+    </div>
+  </div>
+</div>
 </div>
 
 

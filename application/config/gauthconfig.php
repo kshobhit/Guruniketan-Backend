@@ -1,5 +1,8 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
+/* Credentials For Google Authentication*/
+
+
 // Your application client ID, provided post app registry in your Google APIs Console 
 $config['client_id'] = "226599645213-kmt115ddkqupli7vba750k5bud2r5mca.apps.googleusercontent.com";
 // Your application client secret, provided post app registry in your Google APIs Console 

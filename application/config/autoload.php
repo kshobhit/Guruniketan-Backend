@@ -103,7 +103,7 @@ $autoload['helper'] = array('url');
 | config files.  Otherwise, leave it blank.
 |
 */
-$autoload['config'] = array('gauthconfig', 'gcalconfig', 'fauthconfig', 'ccconfig', 'email');
+$autoload['config'] = array('gauthconfig', 'gcalconfig', 'facebook', 'ccconfig', 'email');
 
 /*
 | -------------------------------------------------------------------

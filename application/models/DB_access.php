@@ -17,7 +17,7 @@ class DB_access extends CI_Model
     function login($email, $password)
     {
         $array = array('user_email' => $email,'user_pwd' => MD5($password));
-        $this -> db -> select('reg_id,user_email,user_fname,user_pwd');
+        $this -> db -> select('reg_id,user_email,user_pwd,user_fname,user_picture_url');
         $this -> db -> from('table_registration');
         $this -> db -> where($array);
        
@@ -45,7 +45,7 @@ class DB_access extends CI_Model
             $row = $q->row();
             return $row;
         }else{
-            error_log('no user found getUserInfo('.$email.')');
+           // error_log('no user found getUserInfo('.$email.')');
             return FALSE;
         }
     }
@@ -57,7 +57,7 @@ function getUserInfo($id)
             $row = $q->row();
             return $row;
         }else{
-            error_log('no user found getUserInfo('.$id.')');
+           // error_log('no user found getUserInfo('.$id.')');
             return false;
         }
     }
@@ -108,7 +108,44 @@ function isTokenValid($token)
         
     }
 
-function updatePassword($post)
+    function checkPassword($password)
+    {
+
+        $this->db->where('user_pwd', md5($password));
+        $this->db->from('table_registration');
+         $this -> db -> limit(1);   
+        $query = $this -> db -> get();
+         if($query -> num_rows() == 1)
+        {
+           // print_r ($query->result());
+            return TRUE;
+
+        }
+        else
+        {
+            return false;
+        }
+        
+    
+    }
+    
+
+
+    function changePassword($post,$password)
+    {
+        $this->db->where('user_email',$post['email']);
+        $this->db->update('table_registration', array('user_pwd' => $password));
+        $this->db->update('table_login', array('user_pwd' => $password));
+        $success = $this->db->affected_rows(); 
+        
+        if(!$success){
+            error_log('Unable to updatePassword('.$post['email'].')');
+            return false;
+        }        
+        return true;
+    } 
+    
+    function updatePassword($post)
     {   
         $this->db->where('reg_id', $post['reg_id']);
         $this->db->update('table_registration', array('user_pwd' => MD5($this->input->post('password')))); 
@@ -121,6 +158,66 @@ function updatePassword($post)
         return true;
     } 
 
+
+ //------------------calendar section-------------------//   
+
+ function getEvents()
+    {
+      $email = $this->session->userdata['logged_in']['user_email'];  
+    $sql = "SELECT * FROM events WHERE events.user_email = ?, events.date BETWEEN ? AND ? ORDER BY events.date ASC";
+    return $this->db->query($sql, array($email,$_GET['start'], $_GET['end']))->result();
+    }
+
+    Public function addEvent()
+    {
+
+    $sql = "INSERT INTO events (title,events.date, description, color) VALUES (?,?,?,?)";
+    $this->db->query($sql, array($_POST['title'], $_POST['date'], $_POST['description'], $_POST['color']));
+        return ($this->db->affected_rows()!=1)?false:true;
+    }
+
+    /*Update  event */
+
+    Public function updateEvent()
+    {
+
+    $sql = "UPDATE events SET title = ?, events.date = ?, description = ?, color = ? WHERE id = ?";
+    $this->db->query($sql, array($_POST['title'], $_POST['date'], $_POST['description'], $_POST['color'], $_POST['id']));
+        return ($this->db->affected_rows()!=1)?false:true;
+    }
+
+
+    /*Delete event */
+
+    Public function deleteEvent()
+    {
+
+    $sql = "DELETE FROM events WHERE id = ?";
+    $this->db->query($sql, array($_GET['id']));
+        return ($this->db->affected_rows()!=1)?false:true;
+    }
+
+    /*Update  event */
+
+    Public function dragUpdateEvent()
+    {
+            $date=date('Y-m-d h:i:s',strtotime($_POST['date']));
+
+            $sql = "UPDATE events SET  events.date = ? WHERE id = ?";
+            $this->db->query($sql, array($date, $_POST['id']));
+        return ($this->db->affected_rows()!=1)?false:true;
+
+
+    }
+
+    Public function checkCalendar($user)
+    {   
+        /*Logic - we'll check the calendar database of the particular user his calendar is available or not to add new event  i.e. if his calendar is already occupied at that time, then it should return false otherwise True*/ 
+        
+    }
+
+//-----------------calendar section ends-------------------------//
+/*
  function addUser() 
  {
      $data=array(
@@ -131,11 +228,11 @@ function updatePassword($post)
         $this->db->insert('table_registration',$data);
      //   $this->db->insert('table_login',$data);
  }   
-    
+ */   
    
     /*
      Adding teacher email to database
-    */ 
+     
      
     function add_teacher_email($email)
      {
@@ -145,34 +242,28 @@ function updatePassword($post)
       // 'user_pwd'=>MD5($this->input->post('user_pwd')),
         );
         $this->db->insert('table_registration',$data);
-     //   $this->db->insert('table_login',$data);
+        $this->db->insert('table_login',$data);
         
      }
+*/
+
+   
+
+    function upload_path()
+    {
+       $userID = $this->session->userdata['logged_in']['id'];
+        $upload_data = $this->upload->data();
+        $data = array(
+            'user_picture_url' =>$upload_data['full_path'],
+
+            );
+        $this->db->where('reg_id',$userID);
+        $this->db->update('table_registration',$data); 
+    }
 
 
-     function mailExist($email)
-     {
-        $array = array('user_email' => $email);
-        $this -> db -> select('reg_id,user_email');
-        $this -> db -> from('table_registration');
-        $this -> db -> where($array);
-       
-        $this -> db -> limit(1);   
-      $query = $this -> db -> get();
- 
-        if($query -> num_rows() == 1)
-        {
-           // print_r ($query->result());
-            return $query->result();
-
-        }
-        else
-        {
-            return false;
-        }
-     }
-
-    function registerTeacher()
+/*---------------------- Registration Section-------------------*/
+     function registerTeacher()
     {
         $data=array(
             'user_email'=>$this->input->post('user_email'),
@@ -180,37 +271,15 @@ function updatePassword($post)
             'user_pwd'=>MD5($this->input->post('user_password'))
             );
         $this->db->insert('table_registration',$data);
-     //   $this->db->insert('table_login',$data);
+        $this->db->insert('table_login',$data);
+        $email['user_email']= $this->input->post('user_email');
+       $this->db->insert('table_teacher',$email);
     } 
 
 
-
-
-    function registerStudent()
-    {
-        $data=array(
-            'user_email'=>$this->input->post('user_email'),
-            'reg_type'=>'student',
-            'user_pwd'=>MD5($this->input->post('user_password'))
-            );
-        $this->db->insert('table_registration',$data);
-    //    $this->db->insert('table_login',$data);
-    } 
-
-    function upload_path()
-    {
-       $userID = $this->session->userdata['logged_in']['id'];
-        $upload_data = $this->upload->data();
-        $data = array(
-            'user_profilepic' =>$upload_data['full_path'],
-
-            );
-        $this->db->where('reg_id',$userID);
-        $this->db->update('table_registration',$data); 
-    }
-
+    
   
-     function add_teacher()
+     function add_teacher($email)
      {
         $data=array(
     //    'reg_type'=>'teacher',
@@ -220,6 +289,7 @@ function updatePassword($post)
         'user_dob'=>  date( 'Y-m-d', strtotime( $this->input->post('date'))),
         'user_qualification'=> $this->input->post('qualification'),
         'user_institution'=> $this->input->post('eduinst'),
+        'subject'=> $this->input->post('subject'),
         'user_exp_years'=> $this->input->post('exp-years'),
         'user_exp_months'=> $this->input->post('exp-months'),
         'user_board'=> $this->input->post('board'),
@@ -229,24 +299,40 @@ function updatePassword($post)
         'user_country'=> $this->input->post('country'),
         'user_pincode'=> $this->input->post('pincode'),
         'user_contact'=> $this->input->post('phone'),
-        'user_pwd'=> MD5($this->input->post('password')),
+      //  'user_pwd'=> MD5($this->input->post('password')),
 
     
         
         );
-        $this->db->where('reg_id',$this->session->userdata['registered']['id']);
+        $this->db->where('user_email',$email);
+        $this->db->update('table_teacher',$data);
         return $this->db->update('table_registration',$data);
         
     
      }
 
-     function updateTeacher($option)
+     function updateTeacher($option,$email)
      {
-        $this->db->where('reg_id',$id);
+        $this->db->where('user_email',$email);
+        $this->db->update('table_teacher',$option);
         return $this->db->update('table_registration',$option);
      }
      
-     function add_student()
+
+    function registerStudent()
+    {
+        $data=array(
+            'user_email'=>$this->input->post('user_email'),
+            'reg_type'=>'student',
+            'user_pwd'=>MD5($this->input->post('user_password'))
+            );
+        $this->db->insert('table_registration',$data);
+       $this->db->insert('table_login',$data);
+       $email['user_email']= $this->input->post('user_email');
+       $this->db->insert('table_student',$email);
+    } 
+
+     function add_student($email)
      {
         $data=array(
         //'reg_type' =>'student',
@@ -268,10 +354,46 @@ function updatePassword($post)
     //    'user_pwd'=>MD5($this->input->post('password')),
         
         );
-        $this-> db ->where('user_email',$this->session->userdata['logged_in']['email']);
-        $this-> db ->update('table_registration',$data);
+       // echo $this->session->userdata['registered']['user_email'];
+        $this-> db ->where('user_email',$email);
+        
+         $this-> db ->update('table_registration',$data);
+        $this-> db ->update('table_student',$data);
         
      }
+
+
+     function updateStudent($option,$email)
+     {
+        //print_r($option);
+        $this->db->where('user_email',$email);
+        $this->db->update('table_student',$option);
+        return $this->db->update('table_registration',$option);
+     }
+
+    function mailExist($email)
+     {
+        $array = array('user_email' => $email);
+        $this -> db -> select('reg_id,user_email,user_fname');
+        $this -> db -> from('table_registration');
+        $this -> db -> where($array);
+       
+        $this -> db -> limit(1);   
+      $query = $this -> db -> get();
+ 
+        if($query -> num_rows() == 1)
+        {
+           // print_r ($query->result());
+            return $query->result();
+
+        }
+        else
+        {
+            return false;
+        }
+     }
+     
+
      function checkUser($data = array()){
         $this->db->select('reg_id');
         $this->db->from('table_registration');
@@ -338,11 +460,37 @@ function updatePassword($post)
     function verify_user($key){
        // echo $key;
         $data = array( 'activated' => 1);
-        $this-> db -> where('md5(user_email)',$key);       
+        $this-> db -> where('md5(user_email)',$key);  
+        $this-> db -> update('table_login',$data);     
        return $this-> db -> update('table_registration',$data);    //update status as 1 to make active user
             
-
     }
+  /*----------------------Registration Section Ends------------------*/  
+
+
+/* session Management*/
+function getDetailsOfBatch($batchID)
+{
+     $q = $this->db->get_where('table_batch', array('batch_id' => $batchID), 1);  
+        if($this->db->affected_rows() > 0){
+            $row = $q->row();
+            //print_r ($row);
+            return $row;
+        }else{
+           // error_log('no user found getUserInfo('.$email.')');
+            return FALSE;
+        }
+}
+
+function fetchData($board,$class,$subject)
+{
+    $sql = "SELECT t.user_fname,t.subject,t.user_lname,t.user_exp_years,t.user_exp_months,b.fee,b.batch_id,b.enrolled FROM table_teacher t,table_batch b WHERE t.reg_id = b.teacher_id AND t.user_board like '$board' AND t.subject like '$subject' AND t.user_class like '$class' ";
+    return $this->db->query($sql)->result();
+    //foreach ($result as $row)
+        //while($row)
+        return $row;
+}
+
 
   
      

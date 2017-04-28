@@ -75,7 +75,7 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="#"><img src="assets/img/logo.png" height="50" width="50">    
+      <a class="navbar-brand" href="#"><img src='<?php echo base_url();?>assets/img/logo.png' height="50" width="50">    
       </a>
     </div>
 
@@ -165,7 +165,7 @@
       </div>
       </div>      
 
-        <h3 >Interests</h3>
+        <h3 >Interested In Coaching For:</h3>
         <div class="form-group">
         <label for="">Educational Board:</label>
         <div class="container">
@@ -195,6 +195,22 @@
            <input type="radio" name="class" value="XII"> XII
         </div>
 
+        </div>
+        </div>
+
+        <div class="form-group">
+        <label for="">Subject:</label>
+        <div class="container">
+        <div class="col-md-2">
+           <input type="radio" name="subject" value="Physics"> Physics
+        </div>
+        <div class="col-md-2">   
+           <input type="radio" name="subject" value="Chemistry"> Chemistry
+        </div>
+         <div class="col-md-2">   
+           <input type="radio" name="subject" value="Maths"> Maths
+        </div>
+         
         </div>
         </div>
 
@@ -283,7 +299,7 @@
             </div>
         </div>
 
-
+<!--
          <div class="form-group">
             <label for="password">Password:</label>
             <div class="container">
@@ -299,7 +315,7 @@
             <input type="password" class="form-control" name="confirmpass" placeholder="Confirm the password">
             </div>
             </div>
-        </div>
+        </div>-->
           <br>
        <center><input type="submit" class="btn btn-warning" value="Sign Up"></center>
 <br><br>

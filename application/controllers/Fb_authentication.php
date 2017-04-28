@@ -1,105 +1,128 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed');
-/*author shobhit*/
 class Fb_Authentication extends CI_Controller
 {
     function __construct() {
 		parent::__construct();
-		// Load user model
+		
+		// Load facebook library
+		$this->load->library('facebook');
+		
+		//Load user model
 		$this->load->model('DB_access');
-		$this->CI =& get_instance();
     }
     
-    function teacher(){
-		// Include the facebook api php libraries
-		include_once APPPATH."libraries/facebook-api-php-client/facebook.php";
+    public function teacher(){
+		$userData = array();
 		
-		// Facebook API Configuration
-		$fbPermissions = 'email';
-		
-		//Call Facebook API
-		$facebook = new Facebook(array(
-		  'appId'  => $this->CI->config->item('app_id'),
-		  'secret' => $this->CI->config->item('app_secret')
-		
-		));
-		$fbuser = $facebook->getUser();
-		
-        if ($fbuser) {
-			$userProfile = $facebook->api('/me?fields=id,first_name,last_name,email,gender,locale,picture');
+		// Check if user is logged in
+		if($this->facebook->is_authenticated()){
+			// Get user facebook profile details
+			$userProfile = $this->facebook->request('get', '/me?fields=id,first_name,last_name,email,gender,locale,picture');
+
             // Preparing data for database insertion
-			$userData['oauth_provider'] = 'facebook';
-			$userData['activated'] = '1';
-			$userData['reg_type'] = 'teacher';
-			$userData['oauth_uid'] = $userProfile['id'];
+            $userData['oauth_provider'] = 'facebook';
+            $userData['activated'] = '1';
+            $userData['reg_type'] = 'teacher';
+            $userData['oauth_uid'] = $userProfile['id'];
             $userData['user_fname'] = $userProfile['first_name'];
             $userData['user_lname'] = $userProfile['last_name'];
             $userData['user_email'] = $userProfile['email'];
-			$userData['user_gender'] = $userProfile['gender'];
-			$userData['user_locale'] = $userProfile['locale'];
+            $userData['user_gender'] = $userProfile['gender'];
+            $userData['user_locale'] = $userProfile['locale'];
             $userData['user_profile_url'] = 'https://www.facebook.com/'.$userProfile['id'];
             $userData['user_picture_url'] = $userProfile['picture']['data']['url'];
-			// Insert or update user data
+			
+            // Insert or update user data
             $userID = $this->DB_access->checkUser($userData);
+			
+			// Check user data insert or update status
             if(!empty($userID)){
                 $data['userData'] = $userData;
-                $this->session->set_userdata('userData',$userData);
+                $this->session->set_userdata('logged_in',$userData);
             } else {
                $data['userData'] = array();
             }
-        } else {
-			$fbuser = '';
-            $data['authUrl'] = $facebook->getLoginUrl(array('redirect_uri'=>$this->CI->config->item('redirect_Url_teacher'),'scope'=>$fbPermissions));
+			
+			// Get logout URL
+			$data['logoutUrl'] = $this->facebook->logout_url();
+		}else{
+            $fbuser = '';
+			
+			// Get login URL
+            $data['authUrl'] =  $this->facebook->login_url_teacher();
         }
-		$this->load->view('user_authentication/facebook',$data);
+        //print_r($data);
+        /*if(!empty($data['authUrl']))
+            {
+                redirect('https://www.facebook.com/v2.6/dialog/oauth?client_id=1115209191935522&state=8f291fb49c1a2fb2eb09ed537a3807dc&response_type=code&sdk=php-sdk-5.0.0&redirect_uri=http%3A%2F%2Flocalhost%2Fcodeigniter%2Findex.php%2FFb_authentication%2F&scope=email');
+
+            }*/
+        
+        $this->load->view('home',$data);
+		
+		// Load login & profile view
+        //$this->load->view('user_authentication/facebook',$data);
     }
 
-    function student(){
-		// Include the facebook api php libraries
-		include_once APPPATH."libraries/facebook-api-php-client/facebook.php";
+    public function student(){
+		$userData = array();
 		
-		// Facebook API Configuration
-		$fbPermissions = 'email';
-		
-		//Call Facebook API
-		$facebook = new Facebook(array(
-		  'appId'  => $this->CI->config->item('app_id'),
-		  'secret' => $this->CI->config->item('app_secret')
-		
-		));
-		$fbuser = $facebook->getUser();
-		
-        if ($fbuser) {
-			$userProfile = $facebook->api('/me?fields=id,first_name,last_name,email,gender,locale,picture');
+		// Check if user is logged in
+		if($this->facebook->is_authenticated()){
+			// Get user facebook profile details
+			$userProfile = $this->facebook->request('get', '/me?fields=id,first_name,last_name,email,gender,locale,picture');
+
             // Preparing data for database insertion
-			$userData['oauth_provider'] = 'facebook';
-			$userData['activated'] = '1';
-			$userData['reg_type'] = 'student';
-			$userData['oauth_uid'] = $userProfile['id'];
+            $userData['oauth_provider'] = 'facebook';
+            $userData['activated'] = '1';
+            $userData['reg_type'] = 'student';
+            $userData['oauth_uid'] = $userProfile['id'];
             $userData['user_fname'] = $userProfile['first_name'];
             $userData['user_lname'] = $userProfile['last_name'];
             $userData['user_email'] = $userProfile['email'];
-			$userData['user_gender'] = $userProfile['gender'];
-			$userData['user_locale'] = $userProfile['locale'];
+            $userData['user_gender'] = $userProfile['gender'];
+            $userData['user_locale'] = $userProfile['locale'];
             $userData['user_profile_url'] = 'https://www.facebook.com/'.$userProfile['id'];
             $userData['user_picture_url'] = $userProfile['picture']['data']['url'];
-			// Insert or update user data
+			
+            // Insert or update user data
             $userID = $this->DB_access->checkUser($userData);
+			
+			// Check user data insert or update status
             if(!empty($userID)){
                 $data['userData'] = $userData;
-                $this->session->set_userdata('userData',$userData);
+                $this->session->set_userdata('logged_in',$userData);
             } else {
                $data['userData'] = array();
             }
-        } else {
-			$fbuser = '';
-            $data['authUrl'] = $facebook->getLoginUrl(array('redirect_uri'=>$this->CI->config->item('redirect_Url_student'),'scope'=>$fbPermissions));
+			
+			// Get logout URL
+			$data['logoutUrl'] = $this->facebook->logout_url();
+		}else{
+            $fbuser = '';
+			
+			// Get login URL
+            $data['authUrl'] =  $this->facebook->login_url_student();
         }
-		$this->load->view('user_authentication/facebook',$data);
+        //print_r($data);
+        /*if(!empty($data['authUrl']))
+            {
+                redirect('https://www.facebook.com/v2.6/dialog/oauth?client_id=1115209191935522&state=8f291fb49c1a2fb2eb09ed537a3807dc&response_type=code&sdk=php-sdk-5.0.0&redirect_uri=http%3A%2F%2Flocalhost%2Fcodeigniter%2Findex.php%2FFb_authentication%2F&scope=email');
+
+            }*/
+        
+        $this->load->view('home',$data);
+		
+		// Load login & profile view
+        //$this->load->view('user_authentication/facebook',$data);
     }
-	
+
 	public function logout() {
+		// Remove local Facebook session
+		$this->facebook->destroy_session();
+		// Remove user data from session
 		$this->session->unset_userdata('userData');
-        $this->session->sess_destroy();
-		redirect('/validate/login');
+		// Redirect to login page
+        redirect('/Fb_authentication');
     }
 }

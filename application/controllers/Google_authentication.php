@@ -1,5 +1,7 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed');
+
 /* Author Shobhit */
+
 class Google_Authentication extends CI_Controller
 {
     function __construct() {
@@ -53,7 +55,7 @@ class Google_Authentication extends CI_Controller
             $userID = $this->DB_access->checkUser($userData);
             if(!empty($userID)){
                 $data['userData'] = $userData;
-                $this->session->set_userdata('userData',$userData);
+                $this->session->set_userdata('logged_in',$userData);
             } else {
                $data['userData'] = array();
             }
@@ -61,7 +63,14 @@ class Google_Authentication extends CI_Controller
             $data['authUrl'] = $gClient->createAuthUrl();
            
         }
-		$this->load->view('user_authentication/google',$data);
+		//print_r($data['authUrl']);
+        if(!empty($data['authUrl']))
+            {
+                redirect('https://accounts.google.com/o/oauth2/auth?response_type=code&redirect_uri=http%3A%2F%2Flocalhost%2Fcodeigniter%2Findex.php%2Fgoogle_authentication%2Fteacher%2F&client_id=226599645213-kmt115ddkqupli7vba750k5bud2r5mca.apps.googleusercontent.com&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email&access_type=offline&approval_prompt=force');
+
+            }
+        
+        $this->load->view('home');
     }
 
 
@@ -106,19 +115,25 @@ class Google_Authentication extends CI_Controller
             $userID = $this->DB_access->checkUser($userData);
             if(!empty($userID)){
                 $data['userData'] = $userData;
-                $this->session->set_userdata('userData',$userData);
+                $this->session->set_userdata('logged_in',$userData);
             } else {
                $data['userData'] = array();
             }
         } else {
             $data['authUrl'] = $gClient->createAuthUrl();
         }
-        $this->load->view('user_authentication/google',$data);
+        if(!empty($data['authUrl'])){
+        redirect('https://accounts.google.com/o/oauth2/auth?response_type=code&redirect_uri=http%3A%2F%2Flocalhost%2Fcodeigniter%2Findex.php%2Fgoogle_authentication%2Fstudent%2F&client_id=226599645213-kmt115ddkqupli7vba750k5bud2r5mca.apps.googleusercontent.com&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email&access_type=offline&approval_prompt=force');
+        }
+        $this->load->view('home');
+
     }
+
+
 	
 	public function logout() {
 		$this->session->unset_userdata('token');
-		$this->session->unset_userdata('userData');
+		$this->session->unset_userdata('logged_in');
         $this->session->sess_destroy();
 		redirect('/validate/login');
     }

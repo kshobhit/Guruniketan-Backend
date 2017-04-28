@@ -10,12 +10,11 @@
 
     <link href="<?php echo base_url('assets/css/bootstrap.min.css'); ?>" rel="stylesheet">
     <link href="<?php echo base_url('assets/css/style.css'); ?>" rel="stylesheet">
-    <link href="<?php echo base_url('assets/css/dropbtn.css'); ?>" rel="stylesheet">
-
+    
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.7/jquery.min.js"></script>
  <script src="<?php echo base_url('assets/js/bootstrap.min.js'); ?>"></script>
-  <script src="<?php echo base_url('assets/js/dropbtn.js'); ?>"></script>
+
    <!-- Font Awesome Icons -->
     <script src="https://use.fontawesome.com/0fd0e3f0a4.js"></script>
 
@@ -40,6 +39,10 @@
 
       <div class="col-lg-8 login_box">
           <h3><i class="fa fa-user"></i> Login </h3><br>
+         <div>
+             <center> <input type="hidden" name="rmShown" value="1">                                      
+            <a href="<?php echo base_url();?>index.php/validate/logint">I'm a Teacher</a></center>
+           </div>
 
           <?php echo form_open("validate/login");?> 
 
@@ -67,7 +70,8 @@
                 <a href="<?php echo base_url();?>index.php/Google_authentication/student"><i class="fa fa-google-plus-square fa-4x"></i></a>
 
                 <br><br>
-                <div class="dropdown">                                                           <button onclick="myFunction()" class="dropbtn">Sign Up</button>
+                <div class="dropdown">                                                          
+                 <button onclick="myFunction()" class="dropbtn">Sign Up</button>
                   <div id="myDropdown" class="dropdown-content">
                     <button type="button" class="btn btn-styled2" data-toggle="modal" data-target="#myModalTeacher">Teacher</button>
                     <button type="button" class="btn btn-styled2" data-toggle="modal" data-target="#myModalStudent">Student</button>
@@ -81,7 +85,7 @@
       </div>
     </div>
 
-  <!-- Modal Sign Up for Teacher 
+<!-- Modal Sign Up for Teacher--> 
 <div class="modal fade" id="myModalTeacher" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -95,8 +99,8 @@
           
           <h2>Sign Up with </h2>
 
-                <a href="<?php echo base_url();?>index.php/Fb_authentication/teacher"><img src="./assets/img/fb.png" ></a>
-                <a href="<?php echo base_url();?>index.php/Google_authentication/teacher"><img src="./assets/img/google.png"></a>
+                <a href="<?php echo base_url();?>index.php/Fb_authentication/teacher"><img src="./assets/img/fb-sign-in.png" ></a>
+                <a href="<?php echo base_url();?>index.php/Google_authentication/teacher"><img src="./assets/img/google-sign-in.png"></a>
 
                 <h3>OR
                 <br>
@@ -132,7 +136,7 @@
   </div>
 </div>
 </div>
--->
+
 
   <!-- Modal Sign Up for Student -->
 <div class="modal fade" id="myModalStudent" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -182,7 +186,7 @@
 </div>
 </div>
 
-
+<!--
 <div class="modal fade" id="myModalTeacher" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -208,7 +212,7 @@
     </div>
   </div>
 </div>
- 
+ -->
 
 
 <!-- Modal for Forgot Password -->
@@ -248,28 +252,7 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
   <script src="<?php echo base_url('assets/js/bootstrap.min.js'); ?>"></script>
-    <script>
-      $(document).ready(function(){
-        $('form.jsform').on('submit', function(form){
-            form.preventDefault();
-            $.post('/index.php/validate/reset_password', $('form.jsform').serialize(), function(data){
-                $('div.jsError').html(data);
-            });
-        });
-    });
-
-    </script> 
-    <script>
-      $(document).ready(function(){
-        $('form.jsform1').on('submit', function(form){
-            form.preventDefault();
-            $.post('/index.php/validate/teacher_signup', $('form.jsform1').serialize(), function(data){
-                $('div.jsError').html(data);
-            });
-        });
-    });
-
-    </script>   
+  
 
   </body>
 </html>

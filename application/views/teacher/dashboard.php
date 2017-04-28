@@ -8,11 +8,36 @@
     <title>Teacher's Dashboard</title>
 
     <!-- Bootstrap -->
-    <link href="<?php echo base_url('assets/css/bootstrap.min.css'); ?>" rel="stylesheet">
+  <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href='//cdnjs.cloudflare.com/ajax/libs/fullcalendar/2.1.1/fullcalendar.min.css' rel='stylesheet' />
+    <link href='//cdnjs.cloudflare.com/ajax/libs/fullcalendar/2.1.1/fullcalendar.print.css' rel='stylesheet' media='print' />
+    <link href="//cdnjs.cloudflare.com/ajax/libs/jquery.bootstrapvalidator/0.5.2/css/bootstrapValidator.min.css" rel="stylesheet" />
+    
+    <link href="<?php echo base_url();?>assets/css/bootstrap-colorpicker.min.css" rel="stylesheet" />
+    <link href="<?php echo base_url();?>assets/css/bootstrap-timepicker.min.css" rel="stylesheet" />
+
+    <script src='//cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.3/moment.min.js'></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery.bootstrapvalidator/0.5.2/js/bootstrapValidator.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/2.1.1/fullcalendar.min.js"></script>
+
+    <script src='<?php echo base_url();?>assets/js/bootstrap-colorpicker.min.js'></script>
+    <script src='<?php echo base_url();?>assets/js/bootstrap-timepicker.min.js'></script>
+
+
+   <script type="text/javaScript">    
+      var email="<? echo json_encode($_SESSION['logged_in']['user_email']); ?>";
+      
+    </script>
+    <script type="text/javaScript" src='<?php echo base_url();?>assets/js/main.js'></script>
+
+
+    
     <link href="<?php echo base_url('assets/css/style.css'); ?>" rel="stylesheet">
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-  <script src="<?php echo base_url('assets/js/bootstrap.min.js'); ?>"></script>
+   
+  
 
    <link href="https://fonts.googleapis.com/css?family=Slabo+27px" rel="stylesheet"> 
   <style type="text/css">
@@ -29,6 +54,8 @@
     <![endif]-->
 </head>
 <body style="background-color: rgba(96,125,139 ,0.7);">
+<?php echo $this->session->userdata['logged_in']['picture_url'];?>
+<!--<?php echo $_SESSION['logged_in']['user_email']; ?> -->
 
 <div class="container-fluid">
 <div class="row">
@@ -36,7 +63,7 @@
   <div class="col-lg-3">
   <!-- Profile Section -->
     <div class="profile filled">
-        <img src="<?php echo base_url('assets/img/user-icon.png'); ?>" class="icon-img" height="100" width="100">
+        <img src="<?php echo base_url($this->session->userdata['logged_in']['picture_url']); ?>" class="icon-img" height="100" width="100">
      <!--  <a href="<?php echo base_url();?>index.php/upload"><img src="./assets/img/user-icon.png" class="icon-img" height="100" width="100"></a> -->
         <h5><a href="<?php echo base_url();?>index.php/upload">Change Profile Pic</a></h5>
         <h5><a href="<?php echo base_url();?>index.php/validate/teacher_edit_profile">Update your Profile</a></h5>
@@ -84,10 +111,12 @@
 
     <h1>Teachers' Dashboard</h1>
   
-    <iframe src="https://calendar.google.com/calendar/embed?height=600&amp;wkst=1&amp;bgcolor=%23FFFFFF&amp;ctz=Asia%2FCalcutta" style="border-width:0" width="600" height="600" frameborder="0" scrolling="no"></iframe>
+     <div class="col-md-12 column">
+        <div id='calendar'></div>
+     </div>
+     
 
     </div>    
-
   </div>
 
   <div class="col-lg-3">
@@ -102,6 +131,7 @@
       <a href="<?php echo base_url();?>index.php/validate/student_registration" class="btn btn-warning">Join Here</a>
       <br>
     </div>
+    
      <div class="session-card">
       <h3>Standard</h3>
       <h4>Subject</h4>
@@ -125,10 +155,6 @@
 
 </div>
 
-    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="assets/js/bootstrap.min.js"></script> 
-  <script type="text/javascript" src="assets/bootstrap-datetimepicker.js"></script>  
+  
 </body>
 </html>

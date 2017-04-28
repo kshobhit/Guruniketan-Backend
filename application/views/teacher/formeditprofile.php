@@ -40,8 +40,8 @@
     <hr style="border:1px solid rgba(255,152,0 ,1); width: 90%;">
       
       <?php
-      $hidden = array('is_submit'=> 1); 
-      echo form_open('validate/teacher_edit_profile/'.$data->reg_id,$hidden);?> 
+     
+      echo form_open('validate/teacher_edit_profile/'.$data->reg_id);?> 
      
       <div class="form-group">
       <label for="eduinst">Educational Institute</label>
@@ -142,7 +142,7 @@
             </div>
         </div>
         <br>
-       <center><input type="submit" class="btn btn-warning" value="Update"></center>
+       <center><input type="submit" name="submit" class="btn btn-warning" value="Update"></center>
 <br><br>
       <?php echo form_close(); ?>
      
